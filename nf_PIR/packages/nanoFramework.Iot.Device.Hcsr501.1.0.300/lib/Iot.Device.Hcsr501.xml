@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Iot.Device.Hcsr501</name>
+    </assembly>
+    <members>
+        <member name="T:Iot.Device.Hcsr501.Hcsr501">
+            <summary>
+            PIR Sensor HC-SR501
+            </summary>
+        </member>
+        <member name="M:Iot.Device.Hcsr501.Hcsr501.#ctor(System.Int32,System.Device.Gpio.PinNumberingScheme,System.Device.Gpio.GpioController,System.Boolean)">
+            <summary>
+            Creates a new instance of the HC-SCR501.
+            </summary>
+            <param name="outPin">OUT Pin</param>
+            <param name="pinNumberingScheme">Pin Numbering Scheme</param>
+            <param name="gpioController"><see cref="T:System.Device.Gpio.GpioController"/> related with operations on pins</param>
+            <param name="shouldDispose">True to dispose the Gpio Controller</param>
+        </member>
+        <member name="P:Iot.Device.Hcsr501.Hcsr501.IsMotionDetected">
+            <summary>
+            If a motion is detected, return true.
+            </summary>
+        </member>
+        <member name="M:Iot.Device.Hcsr501.Hcsr501.Dispose">
+            <summary>
+            Cleanup
+            </summary>
+        </member>
+        <member name="T:Iot.Device.Hcsr501.Hcsr501.Hcsr501ValueChangedHandle">
+            <summary>
+            Delegate used for <see cref="E:Iot.Device.Hcsr501.Hcsr501.Hcsr501ValueChanged"/> event
+            </summary>
+            <param name="sender">Object firing the event</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="E:Iot.Device.Hcsr501.Hcsr501.Hcsr501ValueChanged">
+            <summary>
+            Triggering when HC-SR501 value changes
+            </summary>
+        </member>
+        <member name="T:Iot.Device.Hcsr501.Hcsr501ValueChangedEventArgs">
+            <summary>
+            HC-SR501 Value Changed Event Args
+            </summary>
+        </member>
+        <member name="P:Iot.Device.Hcsr501.Hcsr501ValueChangedEventArgs.PinValue">
+            <summary>
+            HC-SR501 OUT Pin Value
+            </summary>
+        </member>
+        <member name="M:Iot.Device.Hcsr501.Hcsr501ValueChangedEventArgs.#ctor(System.Device.Gpio.PinValue)">
+            <summary>
+            Constructs Hcsr501ValueChangedEventArgs instance
+            </summary>
+            <param name="value">New value of pin</param>
+        </member>
+    </members>
+</doc>
