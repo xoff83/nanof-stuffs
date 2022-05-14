@@ -1,5 +1,7 @@
 using Iot.Device.Common;
 using Iot.Device.DHTxx.Esp32;
+using nanoFramework.Device.OneWire;
+using nanoFramework.Hardware.Esp32;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -24,29 +26,59 @@ namespace nf_DHT11
 
             // Chip is ESP32-D0WDQ6 (revision 1)
             Debug.WriteLine("Hello from nanoFramework!");
-            while (true)
+
+
+
+
+            // 1-Wire : https://github.com/nanoframework/nanoFramework.Device.OneWire
+            // 12, 24 represent needle angle
+            //    Dht11's  constructor parameters:
+            //        Int32 pinEcho : The pin number which is used as echo (GPIO number)
+            //        Int32 pinTrigger : The pin number which is used as trigger (GPIO number)
+            //        PinNumberingScheme pinNumberingScheme : The GPIO pin numbering scheme
+            //        GpioController  gpioController : GpioController related with operations on pins
+            //        Boolean     shouldDispose :  true to dispose the GpioController
+            Int32 pinEcho = 14; //26 
+            Int32 pinTrigger = 12;
+
+
+
+            // Important: If you're using an ESP32 device it's mandatory to configure the UART2 pins before creating the OneWireHost.
+            // To do that, you have to add a reference to nanoFramework.Hardware.ESP32.
+            // In the code snnipet below we're assigning GPIOs 16 and 17 to UART2.
+            // Configure pins 16 and 17 to be used in UART2
+            Configuration.SetPinFunction(pinEcho, DeviceFunction.COM2_RX);
+            Configuration.SetPinFunction(pinTrigger, DeviceFunction.COM2_TX);
+
+            OneWireHost _OneWireHost = new OneWireHost();
+            // _OneWireHost.FindFirstDevice(true, false);
+            // To get a list with the serial number of all the 1 - Wire devices connected to the bus:
+            var deviceList = _OneWireHost.FindAllDevices();
+
+            foreach (byte[] device in deviceList)
+            {
+                string serial = "";
+
+                foreach (byte b in device)
+                {
+                    serial += b.ToString("X2");
+                }
+
+                Console.WriteLine($"{serial}");
+            }
+
+            // schema : http://itelitesblog.com/hejiale010426/p/15848574.html
+            // ref: https://www.nuget.org/packages/nanoFramework.IoT.Device.Dhtxx.Esp32/
+            // https://github.com/nanoframework/nanoFramework.IoT.Device/blob/develop/devices/Dhtxx.Esp32/README.md
+            // The DHT sensors are very sensitive, avoid too long cables, electromagnetic perturbations and
+            // compile the code as release not debug to increase the quality of measurement.
+            // 1-Wire Protocol Circuit:
+            //  Simply connect your DHTxx data pin to GPIO12 and GPIO14, the ground to the ground and the VCC to +3.3V.
+
+            using (Dht11 dht = new Dht11(pinEcho, pinTrigger))
             {
 
-                // 1-Wire
-                // 12, 24 represent needle angle
-                //    Dht11's  constructor parameters:
-                //        Int32 pinEcho : The pin number which is used as echo (GPIO number)
-                //        Int32 pinTrigger : The pin number which is used as trigger (GPIO number)
-                //        PinNumberingScheme pinNumberingScheme : The GPIO pin numbering scheme
-                //        GpioController  gpioController : GpioController related with operations on pins
-                //        Boolean     shouldDispose :  true to dispose the GpioController
-                Int32 pinEcho = 14;
-                Int32 pinTrigger = 12;
-
-                // schema : http://itelitesblog.com/hejiale010426/p/15848574.html
-                // ref: https://www.nuget.org/packages/nanoFramework.IoT.Device.Dhtxx.Esp32/
-                // https://github.com/nanoframework/nanoFramework.IoT.Device/blob/develop/devices/Dhtxx.Esp32/README.md
-                // The DHT sensors are very sensitive, avoid too long cables, electromagnetic perturbations and
-                // compile the code as release not debug to increase the quality of measurement.
-                // 1-Wire Protocol Circuit:
-                //  Simply connect your DHTxx data pin to GPIO12 and GPIO14, the ground to the ground and the VCC to +3.3V.
-
-                using (Dht11 dht = new Dht11(pinEcho, pinTrigger))
+                while (true)
                 {
                     var temperature = dht.Temperature;// Get temperature
                     var humidity = dht.Humidity;// Get humidity percentage
@@ -67,17 +99,12 @@ namespace nf_DHT11
                     {
                         Debug.WriteLine("reading DHT sensor error");
                     }
+
+
+                    Thread.Sleep(2525);
                 }
 
-                //    //ssd1306.Write(10,10,"Allumé");
-                //    led.Toggle();
-                //    Thread.Sleep(125);
-                //    led.Toggle();
-                //    Thread.Sleep(125);
-                //    led.Toggle();
-                //    Thread.Sleep(125);
-                //    led.Toggle();
-                Thread.Sleep(2525);
+
             }
             //Thread.Sleep(Timeout.Infinite);
 

@@ -1,5 +1,23 @@
 ﻿################################################################################
 # Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
 ################################################################################
+*.suo
+*/packages/
+*/obj/
+*/bin/
 
 /NFApp1/packages
+./bin/Release
+/nf_DHT11/nf_DHT11/obj/Release
+
+/NFApp1/NFApp1/bin/Debug
+/NFApp1/NFApp1/obj/Debug
+/nf_DHT11/nf_DHT11/bin/Debug
+/nf_DHT11/nf_DHT11/obj/Debug
+/nf_HcSr04/bin/Debug
+/nf_HcSr04/obj/Debug
+/nf_Inmp441/nf_Inmp441/bin/Debug
+/nf_Inmp441/nf_Inmp441/obj/Debug
+/nf_PIR/nf_PIR/bin/Debug
+/nf_Utils/bin/Debug
+/nf_Utils/obj/Debug
