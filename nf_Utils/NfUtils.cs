@@ -11,6 +11,8 @@ namespace nf_Utils
         // Check our documentation online: https://docs.nanoframework.net/
         // Join our lively Discord community: https://discord.gg/gCyBu8T
 
+        // tuto :   https://www.robin-gueldenpfennig.de/2021/09/how-to-run-net-nanoframework-on-esp32-nodeesp/
+        //          https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html
 
         // ESP32 DevKit: 4 is a valid GPIO pin in, some boards like Xiuxin ESP32 may require GPIO Pin 2 instead.
         private const int pinLed = Gpio.IO02;

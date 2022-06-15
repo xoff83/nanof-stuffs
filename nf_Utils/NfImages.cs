@@ -2,7 +2,7 @@
 
 namespace HardwareEsp32.images
 {
-    internal static class NfImages
+    public static class NfImages
     {
         public static byte[] somei96x16()
         {

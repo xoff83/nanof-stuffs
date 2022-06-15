@@ -19,6 +19,7 @@
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
     <Compile Include="BasicFont.cs" />
+    <Compile Include="NfHall.cs" />
     <Compile Include="NfI2cScan.cs" />
     <Compile Include="NfImages.cs" />
     <Compile Include="NfUtils.cs" />
