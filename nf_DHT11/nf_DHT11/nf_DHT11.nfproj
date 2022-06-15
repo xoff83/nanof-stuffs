@@ -23,10 +23,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Iot.Device.Common.WeatherHelper">
-      <HintPath>..\packages\nanoFramework.Iot.Device.Common.WeatherHelper.1.1.1\lib\Iot.Device.Common.WeatherHelper.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Iot.Device.Common.WeatherHelper.1.1.39\lib\Iot.Device.Common.WeatherHelper.dll</HintPath>
     </Reference>
     <Reference Include="Iot.Device.Dhtxx.Esp32">
-      <HintPath>..\packages\nanoFramework.Iot.Device.Dhtxx.Esp32.1.1.3\lib\Iot.Device.Dhtxx.Esp32.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Iot.Device.Dhtxx.Esp32.1.1.51.31918\lib\Iot.Device.Dhtxx.Esp32.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.12.0\lib\mscorlib.dll</HintPath>
@@ -38,7 +38,7 @@
       <HintPath>..\packages\nanoFramework.Hardware.Esp32.1.3.6\lib\nanoFramework.Hardware.Esp32.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Hardware.Esp32.Rmt">
-      <HintPath>..\packages\nanoFramework.Hardware.Esp32.Rmt.1.2.2\lib\nanoFramework.Hardware.Esp32.Rmt.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Hardware.Esp32.Rmt.1.2.3.5\lib\nanoFramework.Hardware.Esp32.Rmt.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Runtime.Events">
       <HintPath>..\packages\nanoFramework.Runtime.Events.1.10.0\lib\nanoFramework.Runtime.Events.dll</HintPath>
