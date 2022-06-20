@@ -2,17 +2,21 @@ using System;
 using System.Device.Gpio;
 using System.Diagnostics;
 using System.Threading;
+using nf_Utils;
 
 namespace nf_PIR
 {
     public class Program
     {
+        private static readonly int pinPIR = Gpio.IO21;
+        private static readonly int pinLED = Gpio.IO2;
         private static GpioController s_GpioController;
+
         public static void Main()
         {
-            Debug.WriteLine("Hello from nanoFramework!");
-            Int32 pinPIR = 21;
-            Int32 pinLED = 2;
+            Debug.WriteLine("Kick's on nanoFramework!");
+            Led.blink(125, 125, 5);
+            Led.blink(525, 1000);
 
             s_GpioController = new GpioController();
             // ESP32 DevKit: Xiuxin ESP32 may require GPIO Pin 2.
@@ -25,25 +29,25 @@ namespace nf_PIR
 
 
             // Starting
-            led.Toggle();
-            Thread.Sleep(125);
-            led.Toggle();
-            Thread.Sleep(125);
-            led.Toggle();
-            Thread.Sleep(125);
-            led.Toggle();
-            Thread.Sleep(525);
+            //led.Toggle();
+            //Thread.Sleep(125);
+            //led.Toggle();
+            //Thread.Sleep(125);
+            //led.Toggle();
+            //Thread.Sleep(125);
+            //led.Toggle();
+            //Thread.Sleep(525);
 
-            GpioPin pir = s_GpioController.OpenPin(pinPIR, PinMode.InputPullUp);
+            //GpioPin pir = s_GpioController.OpenPin(pinPIR, PinMode.InputPullUp);
 
-            while (true)
-            {
-                Debug.WriteLine($"Pir  on {pir.PinNumber} value :  {pir.Read()}");
-                led.Write(pir.Read());
-                Thread.Sleep(1000);
-                led.Write(PinValue.Low);
-                Thread.Sleep(500);
-            }
+            //while (true)
+            //{
+            //    Debug.WriteLine($"Pir  on {pir.PinNumber} value :  {pir.Read()}");
+            //    led.Write(pir.Read());
+            //    Thread.Sleep(1000);
+            //    led.Write(PinValue.Low);
+            //    Thread.Sleep(500);
+            //}
 
             using (Iot.Device.Hcsr501.Hcsr501 sensor = new Iot.Device.Hcsr501.Hcsr501(pinPIR))
             {

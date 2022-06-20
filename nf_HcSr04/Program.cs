@@ -12,8 +12,12 @@ namespace Test
 {
     public class Program
     {
+        //Sonar Hcsr04
         private static readonly int pinTrigger = Gpio.IO13;
         private static readonly int pinEcho = Gpio.IO12;
+        //Screen SSD1306
+        private static readonly int pinData = Gpio.IO21;
+        private static readonly int pinClock = Gpio.IO22;
 
         /// <summary>
         /// This example shows how to use change default pins for devices and to use the Sleep methods in the 
@@ -25,12 +29,10 @@ namespace Test
         /// </summary>
         public static void Main()
         {
-            Debug.WriteLine("Hello from nanoFramework!");
+            Debug.WriteLine("Kick's on nanoFramework!");
+            Led.blink(125, 125, 5);
+            Led.blink(525, 1000);
             //Screen SSD1306
-            int pinData = Gpio.IO21;
-            int pinClock = Gpio.IO22;
-
-
             // I2C1_CLOCK :  Device function CLOCK for I2C1
             // I2C1_DATA  :  Device function DATA for I2C1
             Configuration.SetPinFunction(pinData, DeviceFunction.I2C1_DATA);
@@ -59,9 +61,6 @@ namespace Test
             //Configuration.SetPinFunction(pinTrigger, DeviceFunction.???);
             //Configuration.SetPinFunction(pinEcho, DeviceFunction.I2C1_CLOCK);
 
-
-            Led.blink(125, 125, 5);
-            Led.blink(525, 1000);
             ssd1306.ClearScreen();
             using (var sonar = new Hcsr04(pinTrigger, pinEcho))
             {

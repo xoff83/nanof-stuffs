@@ -29,15 +29,14 @@
       <HintPath>packages\nanoFramework.Iot.Device.Hcsr04.Esp32.1.1.102.51394\lib\Iot.Device.Hcsr04.Esp32.dll</HintPath>
     </Reference>
     <Reference Include="Iot.Device.Ssd13xx">
-      <HintPath>packages\nanoFramework.Iot.Device.Ssd13xx.1.1.1\lib\Iot.Device.Ssd13xx.dll</HintPath>
+      <HintPath>packages\nanoFramework.Iot.Device.Ssd13xx.1.1.58.10097\lib\Iot.Device.Ssd13xx.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib, Version=1.12.0.4, Culture=neutral, PublicKeyToken=c07d481e9758c731">
       <HintPath>packages\nanoFramework.CoreLibrary.1.12.0\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nanoFramework.Hardware.Esp32, Version=1.3.6.3, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>packages\nanoFramework.Hardware.Esp32.1.3.6\lib\nanoFramework.Hardware.Esp32.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nanoFramework.Hardware.Esp32">
+      <HintPath>packages\nanoFramework.Hardware.Esp32.1.3.6.7\lib\nanoFramework.Hardware.Esp32.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Hardware.Esp32.Rmt">
       <HintPath>packages\nanoFramework.Hardware.Esp32.Rmt.1.2.3.5\lib\nanoFramework.Hardware.Esp32.Rmt.dll</HintPath>

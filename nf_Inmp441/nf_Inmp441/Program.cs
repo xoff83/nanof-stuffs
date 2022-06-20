@@ -1,4 +1,5 @@
 using nanoFramework.Hardware.Esp32;
+using nf_Utils;
 using System;
 using System.Device.Adc;
 // waiting for : using System.Device.I2S;
@@ -96,9 +97,11 @@ namespace nf_Inmp441
         **/
         public static void Main()
         {
-            Debug.WriteLine("Decibelmeter nanoFramework!");
+            Debug.WriteLine("Kick's on nanoFramework!");
+            Led.blink(125, 125, 5);
+            Led.blink(525, 1000);
 
-            //Thread.Sleep(Timeout.Infinite);
+            Debug.WriteLine("Decibelmeter nanoFramework!");
 
             // Browse our samples repository: https://github.com/nanoframework/samples
             // Check our documentation online: https://docs.nanoframework.net/
@@ -137,16 +140,16 @@ namespace nf_Inmp441
 
             /*              SCK         |           WS          |           L/R
              *          Synchro ClocK   |   Word Selector I2s   |       Left / Right channel
-             *              Violet      |          Bleu         |           Vert
-             *              ADC1:4      |         ADC1:4        |        0v (ground) for Left Channel
-             *               GPIO:      |          GPIO:        |           GPIO:  
+             *              Violet      |          Bleu         |            Vert
+             *              ADC1:5      |         ADC1:6        |        0v (ground) for Left Channel
+             *             GPIO: 33     |        GPIO: 34       |          GPIO:  GND
              *   -------------------------------------------------------------------------------
              *                          |                       |
              *              SD          |           VDD         |           GND
              *        Serial Data Out   |                       |           
              *             Gris         |         blanc         |           Noir
              *              ADC1:4      |      1.8V to 3.3V     |          0v (masse)  
-             *               GPIO:      |          GPIO:        |           GPIO:  
+             *             GPIO: 32     |       GPIO: 3V3       |          GPIO:  GND
              *              
              *              
              *   SCK:        horloge de données série de l'interface i²s
@@ -164,16 +167,16 @@ namespace nf_Inmp441
             //Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_MCK);
 
             //     I2S1/2 function Bit Clock. Used for general purpose read and write on the I2S bus.
-            Configuration.SetPinFunction(Gpio.IO37, DeviceFunction.I2S1_BCK);
-            DeviceTypes.I2S
+            Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_BCK);
+
             //     I2S1/2 function WS. Used if your have stereo.
             Configuration.SetPinFunction(Gpio.IO34, DeviceFunction.I2S1_WS);
 
             //     I2S1/2 function DATA_OUT. Used for output data typically on a speaker.
-            Configuration.SetPinFunction(Gpio.IO38, DeviceFunction.I2S1_DATA_OUT);
+            Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_DATA_OUT);
 
             //     I2S1/2 function MDATA_IN. Used for input data typically from a microphone.
-            Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_MDATA_IN);
+            //Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_MDATA_IN);
 
 
 
@@ -182,7 +185,7 @@ namespace nf_Inmp441
 
             // for testing
             //Logical channel # 	Internal ADC# 	GPIO # 	Note
-            //8 	                ADC1 	        36 	    Internal Temperture sensor (VP), See restrictions
+            //8 	                ADC1 	        36 	    Internal Temperature sensor (VP), See restrictions
             //9                     ADC1            39      Internal Hall Sensor(VN), See restrictions
             //AdcChannel acTemperature = adc.OpenChannel(8);
             //AdcChannel acHallSensor = adc.OpenChannel(9);
@@ -190,9 +193,9 @@ namespace nf_Inmp441
 
 
 
-            //AdcChannel acSckViolet = adc.OpenChannel(16);//16
-            //AdcChannel acWsBleu = adc.OpenChannel(6);//13
-            AdcChannel adc1SdGris = adc.OpenChannel(4);
+            AdcChannel acSckViolet = adc.OpenChannel(5);//16
+            AdcChannel acWsBleu = adc.OpenChannel(6);//13
+            AdcChannel acSdGris = adc.OpenChannel(4);
 
 
             int max1 = adc.MaxValue;
@@ -209,15 +212,13 @@ namespace nf_Inmp441
                 try
                 {
                     //// Get the value
-                    //valSck = acSckViolet.ReadValue();
-                    //valWs = acWsBleu.ReadValue();
-                    valSd = adc1SdGris.ReadValue();
+                    valSck = acSckViolet.ReadValue();
+                    valWs = acWsBleu.ReadValue();
+                    valSd = acSdGris.ReadValue();
 
-                    double percent = adc1SdGris.ReadRatio();
                     //Console.WriteLine($"SCK: {valSck} , WS: {valWs} , SD: {valSd}");
-                    //Console.WriteLine($"SCK: {valSck}");
-                    //Console.WriteLine($"WS: {valWs}");
-                    Console.WriteLine($"SD: {valSd} ({percent}%)");
+                    Console.WriteLine($"SCK: {acSckViolet.ReadRatio()}% , WS: {acSckViolet.ReadRatio()}% , SD: {acSdGris.ReadRatio()}");
+
 
 
                 }
