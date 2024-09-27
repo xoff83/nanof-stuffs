@@ -1,5 +1,4 @@
-﻿
-namespace nf_Utils
+﻿namespace nf_Utils
 {
     using System.Device.Gpio;
     using nanoFramework.Hardware.Esp32;
@@ -23,7 +22,23 @@ namespace nf_Utils
             led = new GpioController().OpenPin(gpioLed, PinMode.Output);
         }
 
+        public static void On()
+        {
+            if (led == null)
+            {
+                setLed();
+            }
+            led.Write(PinValue.High);
+        }
 
+        public static void Off()
+        {
+            if (led == null)
+            {
+                setLed();
+            }
+            led.Write(PinValue.Low);
+        }
         public static void blink(int msOn = 200, int msOff = 0, int nb = 1)
         {
             if (led == null)
@@ -33,11 +48,18 @@ namespace nf_Utils
             for (int i = 0; i < nb; i++)
             {
                 led.Write(PinValue.High);
-                Thread.Sleep(msOn);
-                led.Toggle();
-                Thread.Sleep(msOff);
+                if (msOn > 0 || msOff > 0)
+                {
+                    Thread.Sleep(msOn);
+                    led.Toggle();
+                    Thread.Sleep(msOff);
+                }
+
             }
-            led.Write(PinValue.Low);
+            if (msOn > 0 || msOff > 0)
+            {
+                led.Write(PinValue.Low);
+            }
         }
     }
 }

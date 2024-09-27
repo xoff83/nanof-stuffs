@@ -3,8 +3,13 @@ using nf_Utils;
 using System;
 using System.Device.Adc;
 // waiting for : using System.Device.I2S;
+using System.Device.I2s;
 using System.Diagnostics;
 using System.Threading;
+using System.IO;
+using System.Threading;
+using MicrophoneIn;
+using nanoFramework.System.IO.FileSystem;
 
 namespace nf_Inmp441
 {
@@ -14,10 +19,13 @@ namespace nf_Inmp441
         * Téléchargement de données: https://pan.baidu.com/s/1bQ5_QeCSIL2UOH7wSF_IFg
         * 
         * Lancement de produit:
-        * INMP441 est un microphone MEMS omnidirectionnel à haute performance, faible consommation d'énergie, sortie numérique avec port inférieur.
-        * La solution complète INMP441 se compose d'un capteur MEMS, d'un conditionnement de la composition du signal, d'un convertisseur analogique-numérique, 
-        * d'un filtre anti-crénelage, d'une gestion de l'alimentation et d'une interface i² 24 bits standard de l'industrie. L'interface i²s permet à INMP441 
-        * de se connecter directement aux processeurs numériques, tels que DSPs et microcontrôleurs, sans avoir besoin du codec audio utilisé dans le système. 
+        * INMP441 est un microphone MEMS omnidirectionnel à haute performance, faible consommation d'énergie,
+        * sortie numérique avec port inférieur.
+        * La solution complète INMP441 se compose d'un capteur MEMS, d'un conditionnement de la composition du signal,
+        * d'un convertisseur analogique-numérique, d'un filtre anti-crénelage,
+        * d'une gestion de l'alimentation et d'une interface i² 24 bits standard de l'industrie.
+        * L'interface i²s permet à INMP441 de se connecter directement aux processeurs numériques, tels que DSPs et microcontrôleurs,
+        * sans avoir besoin du codec audio utilisé dans le système. 
         * INMP441 a un rapport signal/bruit élevé et est un excellent choix pour les applications en champ proche. 
         * INMP441 a une réponse en fréquence à large bande plate, ce qui entraîne une haute définition du son naturel.
         * 
@@ -173,12 +181,29 @@ namespace nf_Inmp441
             Configuration.SetPinFunction(Gpio.IO34, DeviceFunction.I2S1_WS);
 
             //     I2S1/2 function DATA_OUT. Used for output data typically on a speaker.
-            Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_DATA_OUT);
+            //Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_DATA_OUT);
 
             //     I2S1/2 function MDATA_IN. Used for input data typically from a microphone.
-            //Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_MDATA_IN);
+            Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_MDATA_IN);
 
 
+            I2sDevice i2s = new(new I2sConnectionSettings(1) {
+                BitsPerSample = I2sBitsPerSample.Bit8,
+                ChannelFormat = I2sChannelFormat.OnlyLeft,
+                Mode = I2sMode.Master | I2sMode.Rx | I2sMode.Pdm,
+                CommunicationFormat = I2sCommunicationFormat.I2S,
+                SampleRate = 8_000
+            });
+
+
+
+            // should be one second of sound data:
+            SpanByte buff = new byte[8000];
+            i2s.Read(buff);
+            i2s.Dispose();
+
+            byte[] buffer = buff.ToArray();
+            
 
             // Init the ADC
             AdcController adc = new AdcController();
@@ -233,4 +258,45 @@ namespace nf_Inmp441
         }
 
     }
+    public class calculPuissance
+    {
+        //CF : https://forum.arduino.cc/t/arduino-decibel-meter/508876/27
+        int num_Measure = 1024; // Set the number of measurements   
+        int pinSignal = 0; // pin connected to pin O module sound sensor   
+        long Sound_signal;    // Store the value read Sound Sensor   
+        long sum = 0; // Store the total value of n measurements   
+        long level = 0; // Store the average value   
+        int sortie_source = 234; // valeur de sortie avec source de 30 dB
+        public void calculate()
+        {
+            I2sDevice i2s = new(new I2sConnectionSettings(1) {
+                BitsPerSample = I2sBitsPerSample.Bit8,
+                ChannelFormat = I2sChannelFormat.OnlyLeft,
+                Mode = I2sMode.Master | I2sMode.Rx | I2sMode.Pdm,
+                CommunicationFormat = I2sCommunicationFormat.I2S,
+                SampleRate = 8_000
+            });
+
+
+            // should be one second of sound data:
+            SpanByte buff = new byte[8000];
+            i2s.Read(buff);
+            i2s.Dispose();
+
+            byte[] buffer = buff.ToArray();
+
+            //  128 signal readings   
+            for (int i = 0; i < num_Measure; i++)
+            {
+                Sound_signal = analogRead(pinSignal);
+                sum = sum + Sound_signal ^ 2;
+                sum = sum + Sound_signal * Sound_signal;
+            }
+
+            level = (sum / num_Measure) / (sortie_source) + 30; // Calculate the average value   
+            Debug.Write("Sound Level: ");
+            Debug.WriteLine(""+level);
+            sum = 0; // Reset the sum of the measurement values  
+            
+        }
 }
