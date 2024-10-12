@@ -356,7 +356,7 @@ namespace nf_Inmp441
             //  128 signal readings   
             for (int i = 0; i < num_Measure; i++)
             {
-                Sound_signal = analogRead(pinSignal);
+                //Sound_signal = analogRead(pinSignal);
                 sum = sum + Sound_signal ^ 2;
                 sum = sum + Sound_signal * Sound_signal;
             }
