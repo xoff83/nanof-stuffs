@@ -363,8 +363,10 @@ namespace nf_Inmp441
 
             level = (sum / num_Measure) / (sortie_source) + 30; // Calculate the average value   
             Debug.Write("Sound Level: ");
-            Debug.WriteLine(""+level);
+            Debug.WriteLine("" + level);
             sum = 0; // Reset the sum of the measurement values  
-            
+
         }
+    }
+
 }
