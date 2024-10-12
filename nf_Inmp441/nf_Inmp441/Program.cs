@@ -1,10 +1,11 @@
-using nanoFramework.Hardware.Esp32;
-using nf_Utils;
 using System;
 using System.Device.Adc;
 using System.Device.I2s;
 using System.Diagnostics;
 using System.Threading;
+using nanoFramework.Hardware.Esp32;
+//using nf_Utils;
+
 
 namespace nf_Inmp441
 {
@@ -95,11 +96,15 @@ namespace nf_Inmp441
         *       18	                    ADC2	                25	            
         *       19	                    ADC2	                26	 
         **/
+
+        private const int SampleRate = 16_000; //8_000; //44_100 ;
+        private const int BufferSize = 1024;
+
         public static void Main()
         {
             Debug.WriteLine("Kick's on nanoFramework!");
-            Led.blink(125, 125, 5);
-            Led.blink(525, 1000);
+            //Led.blink(125, 125, 5);
+            //Led.blink(525, 1000);
 
             Debug.WriteLine("Decibelmeter nanoFramework!");
 
@@ -124,69 +129,80 @@ namespace nf_Inmp441
              *     I2S is similar to SPI
              */
 
-
-
-
             //     I2S1/2 function Master Clock. Used only in master mode.
             //Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_MCK);
 
             //     I2S1/2 function Bit Clock. Used for general purpose read and write on the I2S bus.
-            Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_BCK);
+            Configuration.SetPinFunction(Gpio.IO33, DeviceFunction.I2S1_BCK); // SCK (BCLK)
 
             //     I2S1/2 function WS. Used if your have stereo.
-            Configuration.SetPinFunction(Gpio.IO34, DeviceFunction.I2S1_WS);
+            Configuration.SetPinFunction(Gpio.IO34, DeviceFunction.I2S1_WS); // WS (LRCLK)
 
             //     I2S1/2 function DATA_OUT. Used for output data typically on a speaker.
             //Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_DATA_OUT);
 
             //     I2S1/2 function MDATA_IN. Used for input data typically from a microphone.
-            Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_MDATA_IN);
+            Configuration.SetPinFunction(Gpio.IO32, DeviceFunction.I2S1_MDATA_IN); // SD (DATA)
 
-
-            I2sDevice i2s = new(new I2sConnectionSettings(1) {
-                BitsPerSample = I2sBitsPerSample.Bit8,
+            // Configuration I2S pour le capteur INMP441
+            I2sConnectionSettings i2sConfig = new I2sConnectionSettings(1) {
+                BusId = 1,
+                BitsPerSample = I2sBitsPerSample.Bit24,
                 ChannelFormat = I2sChannelFormat.OnlyLeft,
-                Mode = I2sMode.Master | I2sMode.Rx | I2sMode.Pdm,
+                Mode = I2sMode.Master | I2sMode.Rx,//| I2sMode.Pdm,
                 CommunicationFormat = I2sCommunicationFormat.I2S,
-                SampleRate = 8_000
-            });
+                SampleRate = SampleRate,
+            };
 
-            // should be one second of sound data:
-            SpanByte buff = new byte[8000];
-            i2s.Read(buff);
-            i2s.Dispose();
-            int valSd = 0;
-
-            while (true)
+            try
             {
-
-                try
+                using (I2sDevice i2s = I2sDevice.Create(i2sConfig))
                 {
-                    //// Get the value
+                    var buffer = new byte[BufferSize];
 
-                    valSd = i2s.ReadValue();
-
-                    //Console.WriteLine($"SCK: {valSck} , WS: {valWs} , SD: {valSd}");
-                    Console.WriteLine($"SCK: {acSckViolet.ReadRatio()}% , WS: {acSckViolet.ReadRatio()}% , SD: {acSdGris.ReadRatio()}");
-
-
-
+                    while (true)
+                    {
+                        i2s.Read(buffer);
+                        double dbLevel = CalculateDecibels(buffer);
+                        Debug.WriteLine($"Niveau sonore : {dbLevel:F2} dB");
+                        Thread.Sleep(1000);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    // Do whatever pleases you with the exception caught
-                    Console.WriteLine(ex.ToString());
-                }
-                // Very slow sampling rate 
-                Thread.Sleep(250);
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erreur I2S : {ex.Message}");
+            }
+
+
 
 
 
         }
 
+        private static double CalculateDecibels(byte[] buffer)
+        {
+            double sum = 0;
+            int samples = buffer.Length / 4; // 4 bytes par échantillon (24 bits + 8 bits de padding)
 
-        public static void adcMain(){
+            for (int i = 0; i < buffer.Length; i += 4)
+            {
+                int sample = (buffer[i + 2] << 16) | (buffer[i + 1] << 8) | buffer[i];
+                if ((sample & 0x800000) != 0)
+                {
+                    sample |= ~0xFFFFFF; // Extension du signe pour les nombres négatifs
+                }
+                double normalizedSample = sample / 8388608.0; // Normalisation à [-1, 1]
+                sum += normalizedSample * normalizedSample;
+            }
+
+            double rms = Math.Sqrt(sum / samples);
+            double db = (20 * Math.Log10(rms)) + 94; // +94 dB pour la référence du microphone
+
+            return db;
+        }
+        public static void adcMain()
+        {
 
             //https://github.com/ikostoski/esp32-i2s-slm
             //https://fr.wikipedia.org/wiki/I2S
