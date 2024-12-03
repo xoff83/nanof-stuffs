@@ -134,7 +134,7 @@ namespace nf_Utils
         {
             get
             {
-                var index = (byte)character;
+                byte index = (byte)character;
                 if ((index < 32) || (index > 127))
                     return _fontTable[0x20];
                 else
